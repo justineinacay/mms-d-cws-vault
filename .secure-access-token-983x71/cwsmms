@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="fil">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CWS / PNK Schedule — Distrito ng Metro Manila South</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --blue:       #1A3A8F;
+    --blue-dark:  #102460;
+    --blue-mid:   #2952CC;
+    --yellow:     #F5C518;
+    --yellow-lt:  #FFF9D6;
+    --green:      #1A7A45;
+    --green-lt:   #D6F5E6;
+    --red:        #C0392B;
+    --red-lt:     #FDECEA;
+    --bg:         #F0F4FF;
+    --card:       #ffffff;
+    --muted:      #7A84A8;
+    --border:     rgba(26,58,143,0.12);
+    --shadow:     0 4px 20px rgba(26,58,143,0.10);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    font-family: 'Poppins', sans-serif;
+    color: var(--blue-dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  header {
+    background: var(--blue-dark);
+    padding: 32px 20px 26px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  header::before {
+    content: '';
+    position: absolute;
+    bottom: -80px; right: -80px;
+    width: 300px; height: 300px;
+    border-radius: 50%;
+    background: rgba(245,197,24,0.08);
+  }
+  header::after {
+    content: '';
+    position: absolute;
+    top: -60px; left: -60px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(245,197,24,0.06);
+  }
+  .header-tag {
+    display: inline-block;
+    background: var(--yellow);
+    color: var(--blue-dark);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 12px;
+  }
+  header h1 {
+    font-size: clamp(15px, 3.5vw, 22px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.35;
+    max-width: 480px;
+    margin: 0 auto 6px;
+  }
+  header p {
+    font-size: 11px;
+    color: rgba(255,255,255,0.5);
+    letter-spacing: 1px;
+    font-weight: 400;
+  }
+
+  /* ── LEGEND ── */
+  .legend-bar {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 14px 16px;
+    background: var(--blue);
+    flex-wrap: wrap;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255,255,255,0.9);
+    letter-spacing: 0.3px;
+  }
+  .legend-dot {
+    width: 12px; height: 12px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+  .legend-dot.tagalog { background: var(--green); }
+  .legend-dot.english { background: var(--red); }
+
+  /* ── SUMMARY PILLS ── */
+  .summary-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    padding: 16px;
+    background: #E8EEFF;
+    border-bottom: 1px solid var(--border);
+  }
+  .pill {
+    display: flex; flex-direction: column; align-items: center;
+    background: var(--blue-dark);
+    border-radius: 10px;
+    padding: 10px 16px;
+    min-width: 88px;
+  }
+  .pill .num {
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--yellow);
+    line-height: 1;
+  }
+  .pill .desc {
+    font-size: 8.5px;
+    color: rgba(255,255,255,0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-top: 4px;
+    text-align: center;
+    max-width: 85px;
+    font-weight: 500;
+  }
+
+  /* ── CONTROLS ── */
+  .controls-wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 16px 16px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .search-box {
+    position: relative;
+  }
+  .search-box svg {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    pointer-events: none;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 11px 16px 11px 40px;
+    border: 1.5px solid var(--border);
+    border-radius: 10px;
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--blue-dark);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-box input:focus {
+    border-color: var(--yellow);
+    box-shadow: 0 0 0 3px rgba(245,197,24,0.15);
+  }
+  .search-box input::placeholder { color: var(--muted); }
+
+  /* ── FILTER TOGGLES ── */
+  .filter-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .filter-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: white;
+    font-family: 'Poppins', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.18s;
+    user-select: none;
+  }
+  .filter-btn .dot {
+    width: 9px; height: 9px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .filter-btn:hover { border-color: var(--blue-mid); color: var(--blue); }
+
+  .filter-btn.active-all   { background: var(--blue-dark); color: #fff; border-color: var(--blue-dark); }
+  .filter-btn.active-tagalog { background: var(--green); color: #fff; border-color: var(--green); }
+  .filter-btn.active-english { background: var(--red); color: #fff; border-color: var(--red); }
+  .filter-btn.active-sabado  { background: var(--blue-mid); color: #fff; border-color: var(--blue-mid); }
+  .filter-btn.active-linggo  { background: #6A3FBF; color: #fff; border-color: #6A3FBF; }
+
+  /* ── LOKAL LIST ── */
+  .lokal-list {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 10px 16px 56px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  /* ── ACCORDION CARD ── */
+  .card {
+    background: var(--card);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    overflow: hidden;
+    transition: box-shadow 0.2s;
+  }
+  .card.open { box-shadow: 0 8px 28px rgba(26,58,143,0.16); }
+
+  .card-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 16px;
+    cursor: pointer;
+    user-select: none;
+    gap: 10px;
+  }
+  .card-header:hover { background: rgba(26,58,143,0.03); }
+
+  .lokal-name {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--blue-dark);
+    flex: 1;
+  }
+  .badge-row { display: flex; gap: 5px; align-items: center; flex-shrink: 0; flex-wrap: wrap; }
+  .badge {
+    font-size: 9.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.4px;
+  }
+  .badge.sabado { background: #DCEAFF; color: var(--blue); }
+  .badge.linggo  { background: #E8DCFF; color: #5B2DB0; }
+  .badge.cws-badge { background: var(--red-lt); color: var(--red); }
+
+  .chevron {
+    width: 18px; height: 18px;
+    flex-shrink: 0;
+    transition: transform 0.3s ease;
+    color: var(--muted);
+  }
+  .card.open .chevron { transform: rotate(180deg); }
+
+  /* ── TABLE ── */
+  .card-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1);
+  }
+  .card.open .card-body { max-height: 700px; }
+
+  .dako-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 12px;
+  }
+  .dako-table thead tr {
+    background: var(--blue-dark);
+  }
+  .dako-table thead th {
+    padding: 8px 14px;
+    text-align: left;
+    font-size: 9.5px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.6);
+  }
+  .dako-table thead th:not(:first-child) { text-align: center; }
+
+  .dako-table tbody tr {
+    border-top: 1px solid #EDF0F8;
+    transition: background 0.12s;
+  }
+  .dako-table tbody tr:hover { background: rgba(26,58,143,0.03); }
+
+  /* Row color coding */
+  .dako-table tbody tr.row-tagalog {
+    border-left: 4px solid var(--green);
+  }
+  .dako-table tbody tr.row-english {
+    border-left: 4px solid var(--red);
+  }
+
+  .dako-table tbody td {
+    padding: 9px 14px;
+    vertical-align: middle;
+  }
+
+  .dako-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .lang-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+  .lang-pill.tagalog {
+    background: var(--green-lt);
+    color: var(--green);
+  }
+  .lang-pill.english {
+    background: var(--red-lt);
+    color: var(--red);
+  }
+  .dako-name-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--blue-dark);
+  }
+
+  .time-chip {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+  .time-chip.sab { background: #DCEAFF; color: var(--blue); }
+  .time-chip.lin { background: #E8DCFF; color: #5B2DB0; }
+  .dash { color: #CCC; font-size: 13px; }
+
+  td.center { text-align: center; }
+
+  /* ── NO RESULTS ── */
+  .no-results {
+    text-align: center;
+    padding: 48px 16px;
+    color: var(--muted);
+    font-size: 13px;
+    display: none;
+  }
+  .no-results span { font-size: 28px; display: block; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-tag">District Schedule</div>
+  <h1>Schedule ng mga Pagsamba ng Kabataan sa mga Dako</h1>
+  <p>Distrito ng Metro Manila South</p>
+</header>
+
+<div class="legend-bar">
+  <div class="legend-item">
+    <div class="legend-dot tagalog"></div>
+    PNK — Pagsamba ng mga Kabataan <span style="color:rgba(255,255,255,0.45);margin-left:2px;">(Tagalog)</span>
+  </div>
+  <div class="legend-item">
+    <div class="legend-dot english"></div>
+    CWS — Children Worship Service <span style="color:rgba(255,255,255,0.45);margin-left:2px;">(English)</span>
+  </div>
+</div>
+
+<div class="summary-row">
+  <div class="pill"><span class="num">22</span><span class="desc">Lokal na May PNK</span></div>
+  <div class="pill"><span class="num">77</span><span class="desc">Kabuuang Dako ng PNK</span></div>
+  <div class="pill"><span class="num">9</span><span class="desc">Lokal na May CWS</span></div>
+  <div class="pill"><span class="num">27</span><span class="desc">Dako — Sabado</span></div>
+  <div class="pill"><span class="num">50</span><span class="desc">Dako — Linggo</span></div>
+</div>
+
+<div class="controls-wrap">
+  <div class="search-box">
+    <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor">
+      <path d="M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398l3.85 3.85a1 1 0 0 0 1.415-1.415l-3.85-3.85zm-5.242 1.156a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11z"/>
+    </svg>
+    <input type="text" id="search" placeholder="Hanapin ang lokal o dako…">
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active-all" data-filter="all">Lahat</button>
+    <button class="filter-btn" data-filter="tagalog">
+      <span class="dot" style="background:var(--green)"></span> PNK — Tagalog
+    </button>
+    <button class="filter-btn" data-filter="english">
+      <span class="dot" style="background:var(--red)"></span> CWS — English
+    </button>
+    <button class="filter-btn" data-filter="sabado">Sabado</button>
+    <button class="filter-btn" data-filter="linggo">Linggo</button>
+  </div>
+</div>
+
+<div class="lokal-list" id="lokalList"></div>
+<div class="no-results" id="noResults">
+  <span>🔍</span>Walang nahanap na lokal o dako.
+</div>
+
+<script>
+const data = [
+  { lokal: "Alabang", dakos: [
+    { name: "Dako ng Villena 1",       sab: "8:00 AM",  lin: null },
+    { name: "Dako ng Kapilya 2 (CWS)", sab: "9:00 AM",  lin: null,  cws: true },
+    { name: "Dako ng Kapilya 1",       sab: "4:00 PM",  lin: null },
+    { name: "Dako ng Limpuasan",       sab: null,        lin: "9:00 AM" },
+    { name: "Dako ng Villena 2",       sab: null,        lin: "10:00 AM" },
+  ]},
+  { lokal: "Almanza", dakos: [
+    { name: "Dako ng Golden Gate",     sab: null,  lin: "9:00 AM" },
+    { name: "Dako ng Pag-Ibig",        sab: null,  lin: "9:30 AM" },
+    { name: "Dako ng Pilar",           sab: null,  lin: "10:00 AM" },
+    { name: "Dako ng Tierra Hermosa",  sab: null,  lin: "10:00 AM" },
+    { name: "Dako ng Kapilya (CWS)",   sab: null,  lin: "12:00 PM", cws: true },
+  ]},
+  { lokal: "BF International", dakos: [
+    { name: "Dako ng Kapilya 1",       sab: "10:00 AM", lin: null },
+    { name: "Dako ng Kapilya 2 (CWS)", sab: null,        lin: "9:00 AM", cws: true },
+  ]},
+  { lokal: "BF Homes", dakos: [
+    { name: "Dako ng Kapilya", sab: "8:00 AM", lin: null },
+  ]},
+  { lokal: "BF Resort Village", dakos: [
+    { name: "Dako ng Kapilya", sab: null, lin: "12:30 PM" },
+  ]},
+  { lokal: "CAA", dakos: [
+    { name: "Dako ng Kapilya 2 (CWS)", sab: "8:30 AM", lin: null, cws: true },
+    { name: "Dako ng Kapilya 1",       sab: null,        lin: "8:30 AM" },
+    { name: "Dako ng Junio Residence", sab: null,        lin: "10:00 AM" },
+  ]},
+  { lokal: "Camella Homes", dakos: [
+    { name: "Dako ng Kapilya",  sab: "11:00 AM", lin: null },
+    { name: "Dako ng Contaoi",  sab: null,        lin: "9:00 AM" },
+  ]},
+  { lokal: "Cupang Muntinlupa", dakos: [
+    { name: "Dako ng Doyogan", sab: "8:00 AM",  lin: null },
+    { name: "Dako ng Kapilya", sab: "10:00 AM", lin: null },
+  ]},
+  { lokal: "Fourth Estate", dakos: [
+    { name: "Dako ng Kapilya 1", sab: null, lin: "8:00 AM" },
+    { name: "Dako ng Kapilya 2", sab: null, lin: "12:00 PM" },
+  ]},
+  { lokal: "Golden Acres", dakos: [
+    { name: "Dako ng Kapilya",          sab: "8:00 AM",  lin: null },
+    { name: "Dako ng Linda's Garden 1", sab: "10:00 AM", lin: null },
+    { name: "Dako ng Greenvalley",      sab: "10:00 AM", lin: null },
+    { name: "Dako ng Peralta",          sab: "10:00 AM", lin: null },
+    { name: "Dako ng Linda's Garden 2", sab: null,        lin: "9:00 AM" },
+  ]},
+  { lokal: "Karunungan", dakos: [
+    { name: "Dako ng Kapilya", sab: "9:30 AM", lin: null },
+  ]},
+  { lokal: "Madrigal", dakos: [
+    { name: "Dako ng Kapilya 1",       sab: null, lin: "8:30 AM" },
+    { name: "Dako ng Kapilya 2 (CWS)", sab: null, lin: "1:00 PM", cws: true },
+  ]},
+  { lokal: "Moonwalk", dakos: [
+    { name: "Dako ng Kapilya", sab: "10:00 AM", lin: null },
+  ]},
+  { lokal: "Muntinlupa", dakos: [
+    { name: "Dako ng Kapilya 2 (CWS)", sab: "8:00 AM",  lin: null,  cws: true },
+    { name: "Dako ng W. Bialen 2",     sab: "8:00 AM",  lin: null },
+    { name: "Dako ng Honorio 2",       sab: "8:45 AM",  lin: null },
+    { name: "Dako ng Kapilya 1",       sab: "10:30 AM", lin: null },
+    { name: "Dako ng W. Bialen 1",     sab: null,        lin: "8:00 AM" },
+    { name: "Dako ng Alcaraz",         sab: null,        lin: "8:45 AM" },
+    { name: "Dako ng Poblacion",       sab: null,        lin: "8:45 AM" },
+    { name: "Dako ng Honorio 1",       sab: null,        lin: "8:45 AM" },
+    { name: "Dako ng Baron Hao",       sab: null,        lin: "9:00 AM" },
+    { name: "Dako ng Manzano Res.",    sab: null,        lin: "9:30 AM" },
+    { name: "Dako ng Country Homes",   sab: null,        lin: "9:45 AM" },
+  ]},
+  { lokal: "Parañaque", dakos: [
+    { name: "Dako ng Kapilya 1",                sab: null, lin: "8:30 AM" },
+    { name: "Dako ng Sampaloc Site",            sab: null, lin: "8:30 AM" },
+    { name: "Dako ng Gatchalian A.",            sab: null, lin: "9:00 AM" },
+    { name: "Dako ng Santos Compound A.",       sab: null, lin: "9:00 AM" },
+    { name: "Dako ng San Antonio Valley 2 A.",  sab: null, lin: "9:00 AM" },
+    { name: "Dako ng Santos Compound B.",       sab: null, lin: "10:30 AM" },
+    { name: "Dako ng San Antonio Valley 2 B.",  sab: null, lin: "10:30 AM" },
+    { name: "Dako ng Wincel",                   sab: null, lin: "10:30 AM" },
+    { name: "Dako ng Gatchalian B.",            sab: null, lin: "11:00 AM" },
+    { name: "Dako ng Kapilya 2 (CWS)",          sab: null, lin: "12:00 NN", cws: true },
+  ]},
+  { lokal: "Pamplona", dakos: [
+    { name: "Dako ng Santos",        sab: "9:00 AM",  lin: null },
+    { name: "Dako ng Manuela",       sab: "9:00 AM",  lin: null },
+    { name: "Dako ng Centraza",      sab: "9:00 AM",  lin: null },
+    { name: "Dako ng Marable",       sab: "10:00 AM", lin: null },
+    { name: "Dako ng Kapilya (CWS)", sab: null,        lin: "12:00 PM", cws: true },
+  ]},
+  { lokal: "Saint Joseph", dakos: [
+    { name: "Dako ng Kapilya", sab: null, lin: "12:00 PM" },
+  ]},
+  { lokal: "Severina 18", dakos: [
+    { name: "Dako ng Estigoy 1",    sab: null, lin: "8:30 AM" },
+    { name: "Dako ng Country Side", sab: null, lin: "9:00 AM" },
+    { name: "Dako ng Dela Cruz",    sab: null, lin: "9:00 AM" },
+    { name: "Dako ng Bagong Silang",sab: null, lin: "9:30 AM" },
+    { name: "Dako ng Estigoy 2",    sab: null, lin: "10:30 AM" },
+    { name: "Dako ng Masville",     sab: null, lin: "10:30 AM" },
+    { name: "Dako ng Kapilya",      sab: null, lin: "11:30 AM" },
+  ]},
+  { lokal: "Sucat", dakos: [
+    { name: "Dako ng Kapilya",     sab: "2:00 PM", lin: null },
+    { name: "Dako ng Upper Sucat", sab: null,       lin: "9:00 AM" },
+    { name: "Dako ng Lopena",      sab: null,       lin: "10:00 AM" },
+  ]},
+  { lokal: "Talon", dakos: [
+    { name: "Dako ng Kapilya (CWS)", sab: "8:30 AM", lin: null, cws: true },
+    { name: "Dako ng Pag-Ibig",      sab: "9:00 AM", lin: null },
+  ]},
+  { lokal: "Tunasan", dakos: [
+    { name: "Dako ng Kapilya",      sab: "9:00 AM", lin: null },
+    { name: "Dako ng Vargas Res.",  sab: null,       lin: "9:00 AM" },
+    { name: "Dako ng Hibo Res.",    sab: null,       lin: "9:00 AM" },
+    { name: "Dako ng Antolin Res.", sab: null,       lin: "9:00 AM" },
+    { name: "Dako ng Embang Res.",  sab: null,       lin: "9:00 AM" },
+  ]},
+  { lokal: "Victoria", dakos: [
+    { name: "Dako ng Kapilya", sab: "9:00 AM", lin: null },
+  ]},
+];
+
+let activeFilter = 'all';
+
+function matchesFilter(d) {
+  if (activeFilter === 'tagalog') return !d.cws;
+  if (activeFilter === 'english') return !!d.cws;
+  if (activeFilter === 'sabado')  return !!d.sab;
+  if (activeFilter === 'linggo')  return !!d.lin;
+  return true;
+}
+
+function hasCWS(l) { return l.dakos.some(d => d.cws); }
+function hasSab(l)  { return l.dakos.some(d => d.sab); }
+function hasLin(l)  { return l.dakos.some(d => d.lin); }
+
+function renderCards() {
+  const list    = document.getElementById('lokalList');
+  const noRes   = document.getElementById('noResults');
+  const q       = document.getElementById('search').value.trim().toLowerCase();
+  list.innerHTML = '';
+  let count = 0;
+
+  data.forEach(lokal => {
+    let dakos = lokal.dakos.filter(matchesFilter);
+    if (q) {
+      dakos = dakos.filter(d =>
+        d.name.toLowerCase().includes(q) || lokal.lokal.toLowerCase().includes(q)
+      );
+      if (!lokal.lokal.toLowerCase().includes(q) && dakos.length === 0) return;
+      if (lokal.lokal.toLowerCase().includes(q) && dakos.length === 0) {
+        dakos = lokal.dakos.filter(matchesFilter);
+      }
+    }
+    if (dakos.length === 0) return;
+    count++;
+
+    const isOpen = !!q;
+    const card = document.createElement('div');
+    card.className = 'card' + (isOpen ? ' open' : '');
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard(this)">
+        <span class="lokal-name">${lokal.lokal}</span>
+        <div class="badge-row">
+          ${hasSab(lokal) ? '<span class="badge sabado">Sabado</span>' : ''}
+          ${hasLin(lokal) ? '<span class="badge linggo">Linggo</span>' : ''}
+          ${hasCWS(lokal) ? '<span class="badge cws-badge">CWS</span>' : ''}
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="6 9 12 15 18 9"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <table class="dako-table">
+          <thead>
+            <tr>
+              <th style="width:50%">Dako</th>
+              <th>Sabado</th>
+              <th>Linggo</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${dakos.map(d => `
+              <tr class="${d.cws ? 'row-english' : 'row-tagalog'}">
+                <td>
+                  <div class="dako-name-cell">
+                    <span class="lang-pill ${d.cws ? 'english' : 'tagalog'}">${d.cws ? 'ENG' : 'FIL'}</span>
+                    <span class="dako-name-text">${d.name}</span>
+                  </div>
+                </td>
+                <td class="center">${d.sab ? `<span class="time-chip sab">${d.sab}</span>` : '<span class="dash">—</span>'}</td>
+                <td class="center">${d.lin ? `<span class="time-chip lin">${d.lin}</span>` : '<span class="dash">—</span>'}</td>
+              </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+    list.appendChild(card);
+  });
+
+  noRes.style.display = count === 0 ? 'block' : 'none';
+}
+
+function toggleCard(header) {
+  header.parentElement.classList.toggle('open');
+}
+
+// Filter buttons
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b => {
+      b.className = 'filter-btn';
+    });
+    btn.classList.add('active-' + activeFilter);
+    renderCards();
+  });
+});
+
+document.getElementById('search').addEventListener('input', renderCards);
+
+renderCards();
+</script>
+</body>
+</html>
